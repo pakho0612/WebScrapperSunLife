@@ -1,25 +1,3 @@
-class depositEntry:
-    def __init__(self):
-        self.amount = 0
-        self.depositID = 0
-        self.transactions = [] ## [transactionEntry]
-
-    def depositEntry(self, amount=0, depositID=0, transactions=[]):
-        self.amount = amount
-        self.depositID = depositID
-        self.transactions = transactions
-    
-    def setAmount(self, amount):
-        self.amount = amount
-
-    def addTransaction(self, contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink=""):
-        self.transactions.append(transactionEntry(contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink))
-
-    def addTransaction(self, transaction):
-        if(type(transaction)==transactionEntry):
-            self.transactions.append(transaction)
-        else:
-            return Exception("Cannot add transaction:Invalid transaction entry")
 
 class transactionEntry:
     ## Contract Number: X
@@ -50,16 +28,21 @@ class transactionEntry:
 class dataEntry:
     def __init__(self):
         self.date = None
-        self.deposits = [] ## [depositEntry]
-    
+        self.deposits = {} ## {date: [depositEntry]}
+
     def addDeposit(self, deposit):
         if (type(deposit) == depositEntry):
             self.deposits.append(deposit)
         else:
             return Exception("Cannot add deposit: Invalid deposit entry")
 
-    def addDeposit(self, depositID, contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink=""):
-        deposit = depositEntry(depositID=depositID)
+    def addTransaction(self, date, depositID, contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink=""):
+        if date not in self.deposits:
+            self.deposits[date] = {}
+        if depositID not in self.deposits[date]:
+            self.deposits[date][depositID] = depositEntry(depositID=depositID)
         transaction = transactionEntry(contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink)
-        deposit.addTransaction(transaction)
-        self.addDeposit(deposit)
+        self.deposits[date][depositID].addTransaction(transaction)
+
+    def setDate(self, date):
+        self.date = date
