@@ -1,7 +1,7 @@
 from const import URL
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 from fcn import properFloat
 
 from src.dataClass import ClaimEntry, Deposits
@@ -62,6 +62,20 @@ def validTransaction(rows):
             allDeposits[curDate][curDepositID].setPaidTotal(properFloat(row[7][0]))
     return allDeposits
 
+def searchTotal(allDeposits, startDate, endDate, total):
+    ## startDate: 20250823
+    ## endDate: 20250901
+    start = datetime.strptime(str(startDate), '%Y%m%d')
+    end = datetime.strptime(str(endDate), '%Y%m%d')
+    curDate = startDate
+    out = []
+    while curDate <= endDate:
+        if curDate in allDeposits:## if we have depoist on the date
+            for deposit in allDeposits[curDate].values():
+                if deposit.paidTotal == total:
+                    out.append(deposit)
+        curDate = int((datetime.strptime(str(curDate), "%Y%m%d") + timedelta(days=1)).strftime("%Y%m%d")) ## advance cur date
+    return out
 
 def main():
     tables = pd.DataFrame(pd.read_html(URL, extract_links="all")[7]) ## 7 stores the target insurance data
@@ -83,7 +97,12 @@ def main():
     ##                  Paid Amount: v
     ##                  PDF Link: v:
     allDeposits = validTransaction(tables.values)
-    print("Done")
+
+    startDate = 20250801
+    endDate = 20250901
+    total = 1416.72
+    result = searchTotal(allDeposits, startDate, endDate, total)
+    print(result)
 
 
 
