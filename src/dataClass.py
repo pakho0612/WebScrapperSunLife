@@ -1,5 +1,5 @@
 
-class transactionEntry:
+class ClaimEntry:
     ## Contract Number: X
     ## Member ID: X
     ## First Name: v
@@ -7,16 +7,7 @@ class transactionEntry:
     ## Claimed Amount: X
     ## Paid Amount: v
     ## PDF Link: v:
-    def __init__(self):
-        self.contractNumber = 0
-        self.memberID = 0
-        self.firstName = ""
-        self.claimNumber = 0
-        self.claimedAmount = 0
-        self.paidAmount = 0
-        self.pdfLink = ""
-
-    def transactionEntry(self, contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink):
+    def __init__(self, contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink):
         self.contractNumber = contractNumber
         self.memberID = memberID
         self.firstName = firstName
@@ -25,24 +16,27 @@ class transactionEntry:
         self.paidAmount = paidAmount
         self.pdfLink = pdfLink
 
-class dataEntry:
-    def __init__(self):
-        self.date = None
-        self.deposits = {} ## {date: [depositEntry]}
+class Deposits:
+    ## [Date][Deposits]
+    def __init__(self, date, depositID):
+        self.date = date
+        self.depositID = depositID
+        self.paidTotal = 0
+        self.deposits = [] ## [depositEntry]
 
-    def addDeposit(self, deposit):
-        if (type(deposit) == depositEntry):
-            self.deposits.append(deposit)
+    def add(self, claim):
+        if (type(claim) == ClaimEntry):
+            self.deposits.append(claim)
+            self.paidTotal += claim.paidAmount
         else:
-            return Exception("Cannot add deposit: Invalid deposit entry")
+            return Exception("Cannot add claim: Invalid claim entry")
 
-    def addTransaction(self, date, depositID, contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink=""):
-        if date not in self.deposits:
-            self.deposits[date] = {}
-        if depositID not in self.deposits[date]:
-            self.deposits[date][depositID] = depositEntry(depositID=depositID)
-        transaction = transactionEntry(contractNumber, memberID, firstName, claimNumber, claimedAmount, paidAmount, pdfLink)
-        self.deposits[date][depositID].addTransaction(transaction)
-
+    def setPaidTotal(self, paidTotal):
+        if (self.paidTotal == paidTotal):## sanity check
+            self.paidTotal = paidTotal
+            return True
+        else:
+            return Exception("Cannot set paid total: Invalid amount")
+        
     def setDate(self, date):
         self.date = date
