@@ -82,7 +82,7 @@ class AllDeposits:
         while curDate <= endDate:
             if curDate in self.deposits:## if we have depoist on the date
                 for deposit in self.deposits[curDate].values():
-                    if deposit.paidTotal == total:
+                    if round(deposit.paidTotal,2) == round(total,2):
                         out.append(deposit)
             curDate = int((datetime.strptime(str(curDate), "%Y%m%d") + timedelta(days=1)).strftime("%Y%m%d")) ## advance cur date
         return out

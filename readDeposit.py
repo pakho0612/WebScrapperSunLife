@@ -62,15 +62,18 @@ def readAllDeposits(rows):
             (allDeposits.getDeposit(curDate, curDepositID)).setPaidTotal(properFloat(row[7][0]))
     return allDeposits
 
-
-
-def main():
+def readTable(url):
     tables = pd.DataFrame(pd.read_html(URL, extract_links="all")[7]) ## 7 stores the target insurance data
     ##print(tables)
     colHeader = []
     for col in tables.columns: ## creating column header list
         colHeader.append(col[0]) ## ('Date of statement', None) extract only the string
     print(colHeader)
+    return tables
+
+
+def main():
+    
     ## need to group entries by date first then deposit ID(aka under same transaction) with total amount deposited
     ## Date: Array[]
     ##      Amount: 

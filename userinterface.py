@@ -1,6 +1,9 @@
 import tkinter as tk
 import re
+from readDeposit import readAllDeposits, readTable
 
+
+from readDeposit import readAllDeposits
 class dateEntry(tk.Entry):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -87,9 +90,13 @@ class App(tk.Tk):
 
     def handleConfirm(self):
         # Handle the confirm button click
-        if self.startDateEntry.validateDate() and self.endDateEntry.validateDate():
+        if self.startDateEntry.validateDate() and self.endDateEntry.validateDate()and self.urlVar.get() != "" and self.amountEntry.validateFloat():
             print(self.startDateEntry.getValue(), self.endDateEntry.getValue())
             print(self.amountEntry.getValue())
+            tables = readTable(self.urlVar.get())
+            allDeposits = readAllDeposits(tables.values)
+            result = allDeposits.searchTotal(int(self.startDateEntry.getValue()), int(self.endDateEntry.getValue()), float(self.amountEntry.getValue()))
+            print(result)
         else:
             print("Invalid date Input")
 
