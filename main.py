@@ -31,7 +31,7 @@ def rowToClaimEntry(row):
             pdfLink=row[5][1]
         )
     
-def validTransaction(rows):
+def readAllDeposits(rows):
     allDeposits = AllDeposits()
     curDate = None
     curDepositID = 0
@@ -83,7 +83,7 @@ def main():
     ##                  Claimed Amount: X
     ##                  Paid Amount: v
     ##                  PDF Link: v:
-    allDeposits = validTransaction(tables.values)
+    allDeposits = readAllDeposits(tables.values)
 
     startDate = 20250801
     endDate = 20250901
