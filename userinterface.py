@@ -1,10 +1,7 @@
 import tkinter as tk
 import re
-from readDeposit import readAllDeposits, readTable
+from readDeposit import readDeposit
 from src.dataClass import Deposits
-
-
-from readDeposit import readAllDeposits
 class dateEntry(tk.Entry):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -64,6 +61,7 @@ class resultBox():
     def __init__(self, tkFrame):
         self.box = tk.Text(tkFrame)
         self.copyButton = None
+        self.downloadPDFButton = None
         self.deposit=None
         self.frame = tkFrame
 
@@ -75,21 +73,30 @@ class resultBox():
         if isinstance(deposit, Deposits):
             self.box.insert(tk.END, deposit.detailToString())
             self.deposit = deposit
-            self.copyButton = tk.Button(self.frame, text="Copy to Clipboard", command=self.setCopyToClipBoard)
+            self.copyButton = tk.Button(self.frame, text="Copy to Clipboard", command=self.copyToClipBoard)
+            self.downloadPDFButton = tk.Button(self.frame, text="Download PDF", command=self.downloadPdf)
 
-    def setCopyToClipBoard(self):
+    def copyToClipBoard(self):
         self.frame.clipboard_clear()
         self.frame.clipboard_append(self.deposit.claimsToString())
+
+    def downloadPdf(self):
+        links = self.deposit.getPDFLinks()
+        print(links)
 
     def clearBox(self):
         self.box.destroy()
         if self.copyButton is not None:
             self.copyButton.destroy()
+        if self.downloadPDFButton is not None:
+            self.downloadPDFButton.destroy()
     
     def renderBox(self):
         self.box.grid(column=0, pady=5)
         if self.copyButton is not None:
             self.copyButton.grid(column=1, pady=5)
+        if self.downloadPDFButton is not None:
+            self.downloadPDFButton.grid(column=2, pady=5)
 
 class resultBoxes():
     def __init__(self, tkFrame):
@@ -161,8 +168,7 @@ class App(tk.Tk):
         if self.startDateEntry.validateDate() and self.endDateEntry.validateDate()and self.urlVar.get() != "" and self.amountEntry.validateFloat():
             print(self.startDateEntry.getValue(), self.endDateEntry.getValue())
             print(self.amountEntry.getValue())
-            tables = readTable(self.urlVar.get())
-            allDeposits = readAllDeposits(tables.values)
+            allDeposits = readDeposit(self.urlVar.get()).readURL()
             results = allDeposits.searchTotal(int(self.startDateEntry.getValue()), int(self.endDateEntry.getValue()), float(self.amountEntry.getValue()))
             self.resultBox.setBoxes(results)
             

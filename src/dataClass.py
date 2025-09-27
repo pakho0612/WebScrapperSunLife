@@ -60,6 +60,12 @@ class Deposits:
         for claim in self.deposits:
             claimString.append(f"{claim.firstName}\t{claim.memberID}\t{claim.claimNumber}\t{claim.paidAmount}")
         return "\n".join(claimString)
+    
+    def getPDFLinks(self):
+        pdfString = []
+        for claim in self.deposits:
+            pdfString.append(f"{claim.pdfLink}")
+        return pdfString
 
 class AllDeposits:
     def __init__(self):
