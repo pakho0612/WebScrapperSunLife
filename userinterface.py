@@ -2,6 +2,7 @@ import tkinter as tk
 import re
 from readDeposit import readDeposit
 from src.dataClass import Deposits
+from fcn import pagesToPDF
 class dateEntry(tk.Entry):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -83,6 +84,7 @@ class resultBox():
     def downloadPdf(self):
         links = self.deposit.getPDFLinks()
         print(links)
+        pagesToPDF(links, "SunLifeScrapper_output.pdf")
 
     def clearBox(self):
         self.box.destroy()
@@ -104,7 +106,7 @@ class resultBoxes():
         self.frame = tkFrame
 
     def setResult(self, results):
-        if results is not None:
+        if results:
             for deposit in results:
                 if isinstance(deposit, Deposits):
                     box = resultBox(self.frame)

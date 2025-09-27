@@ -1,7 +1,7 @@
 from const import URL
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime
 from fcn import properFloat
 
 from src.dataClass import ClaimEntry, Deposits, AllDeposits
