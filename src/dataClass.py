@@ -45,6 +45,16 @@ class Deposits:
     def setDate(self, date):
         self.date = date
 
+    def detailToString(self):
+        details = []
+        details.append(f"Date: {self.date}")
+        details.append(f"Deposit ID: {self.depositID}")
+        details.append(f"Paid Total: {self.paidTotal}")
+        details.append("Claims:")
+        for claim in self.deposits:
+            details.append(f"  - {claim.firstName} ({claim.memberID}): {claim.claimedAmount} / {claim.paidAmount}")
+        return "\n".join(details)
+
 class AllDeposits:
     def __init__(self):
         self.deposits = {}
