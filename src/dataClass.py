@@ -52,8 +52,14 @@ class Deposits:
         details.append(f"Paid Total: {self.paidTotal}")
         details.append("Claims:")
         for claim in self.deposits:
-            details.append(f"  - {claim.firstName} ({claim.memberID}): {claim.claimedAmount} / {claim.paidAmount}")
+            details.append(f"{claim.firstName}\t{claim.memberID}\t{claim.claimNumber}\t{claim.paidAmount}")
         return "\n".join(details)
+    
+    def claimsToString(self):
+        claimString = []
+        for claim in self.deposits:
+            claimString.append(f"{claim.firstName}\t{claim.memberID}\t{claim.claimNumber}\t{claim.paidAmount}")
+        return "\n".join(claimString)
 
 class AllDeposits:
     def __init__(self):

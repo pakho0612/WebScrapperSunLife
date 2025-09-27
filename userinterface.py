@@ -60,6 +60,37 @@ class numEntry(tk.Entry):
     def getValue(self):
         return float(self.numVar.get())
     
+class resultBox():
+    def __init__(self, tkFrame):
+        self.box = tk.Text(tkFrame)
+        self.copyButton = None
+        self.deposit=None
+        self.frame = tkFrame
+
+    def setNotFoundBox(self):
+        self.box = tk.Text(self.frame)
+        self.box.insert(tk.END, "No results found")
+
+    def setDepositBox(self, deposit):
+        if isinstance(deposit, Deposits):
+            self.box.insert(tk.END, deposit.detailToString())
+            self.deposit = deposit
+            self.copyButton = tk.Button(self.frame, text="Copy to Clipboard", command=self.setCopyToClipBoard)
+
+    def setCopyToClipBoard(self):
+        self.frame.clipboard_clear()
+        self.frame.clipboard_append(self.deposit.claimsToString())
+
+    def clearBox(self):
+        self.box.destroy()
+        if self.copyButton is not None:
+            self.copyButton.destroy()
+    
+    def renderBox(self):
+        self.box.grid(column=0, pady=5)
+        if self.copyButton is not None:
+            self.copyButton.grid(column=1, pady=5)
+
 class resultBoxes():
     def __init__(self, tkFrame):
         self.boxes = []
@@ -69,24 +100,24 @@ class resultBoxes():
         if results is not None:
             for deposit in results:
                 if isinstance(deposit, Deposits):
-                    box = tk.Text(self.frame)
-                    box.insert(tk.END, deposit.detailToString())
-                    self.boxes.append((box, deposit))
+                    box = resultBox(self.frame)
+                    box.setDepositBox(deposit)
+                    self.boxes.append(box)
                 else:
                     return TypeError("Invalid deposit result to set")
         else:
-            box = tk.Text(self.frame)
-            box.insert(tk.END, "No results found")
-            self.boxes.append((box, None))
+            box = resultBox(self.frame)
+            box.setNotFoundBox()
+            self.boxes.append(box)
 
     def clearResults(self):
         for box in self.boxes:
-            box[0].destroy()
+            box.clearBox()
         self.boxes = []
 
     def renderBox(self):
-        for box, deposit in self.boxes:
-            box.grid(pady=5)
+        for obj in self.boxes:
+            obj.renderBox()
 
     def setBoxes(self, results):
         ## render search results to result box
